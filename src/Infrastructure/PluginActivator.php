@@ -1,8 +1,6 @@
 <?php
 
-if(!defined("ABSPATH")) {
-    exit;
-}
+namespace WPTrace\Infrastructure;
 
 use WPTrace\Infrastructure\Database\Migrations\CreateAuditEventsTable;
 
