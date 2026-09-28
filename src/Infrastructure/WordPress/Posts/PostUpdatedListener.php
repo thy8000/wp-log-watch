@@ -3,7 +3,7 @@
 namespace WPTrace\Infrastructure\WordPress\Posts;
 
 use WPTrace\Application\Audit\RecordAuditEvent;
-use WPTrace\Application\DTO\RecordAuditInput;
+use WPTrace\Application\DTO\RecordAuditEventInput;
 
 final class PostUpdatedListener
 {
