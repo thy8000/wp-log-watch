@@ -16,11 +16,11 @@ final class RecordAuditEvent
 
     public function execute(RecordAuditEventInput $Input) {
         $event = AuditEvent::create(
-            action: $input->action,
-            actorID: $input->actorID,
-            objectType: $input->objectType,
-            objectID: $input->objectID,
-            context: $input->context,
+            action: $Input->action,
+            actorID: $Input->actorID,
+            objectType: $Input->objectType,
+            objectID: $Input->objectID,
+            context: $Input->context,
         );
 
         $this->Repository->save($event);
