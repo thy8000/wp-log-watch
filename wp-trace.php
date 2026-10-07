@@ -21,13 +21,4 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
 
-use \WPTrace\Infrastructure\PluginActivator;
-use \WPTrace\Infrastructure\WordPress\Posts\PostUpdatedListener;
-
-\register_activation_hook(
-	__FILE__,
-	[PluginActivator::class, 'activate']
-);
-
-$PostUpdatedListener = new PostUpdatedListener();
-$PostUpdatedListener->register();
+new WPTrace\Database\AuditLogTable(__FILE__);

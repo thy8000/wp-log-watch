@@ -1250,3 +1250,40 @@ A regra que eu manteria durante o desenvolvimento é especialmente importante:
 > **Se uma decisão arquitetural não facilitar teste, manutenção, extensão ou isolamento do WordPress, provavelmente ela não pertence ao MVP.**
 
 **Referência:** [WordPress Plugin Handbook — Plugin Architecture](https://developer.wordpress.org/plugins/plugin-basics/?utm_source=chatgpt.com)
+
+Fase 1:
+
+✓ tabela própria
+✓ AuditEvent
+✓ AuditLogger
+✓ AuditRepository
+✓ criação de post
+✓ atualização de post
+✓ exclusão de post
+✓ criação de usuário
+✓ alteração de usuário
+✓ login
+✓ logout
+✓ ator
+✓ recurso
+✓ timestamp
+✓ IP
+✓ alterações
+
+Fase 2:
+
+✓ tela administrativa
+✓ filtros
+✓ paginação
+✓ pesquisa por usuário
+✓ pesquisa por recurso
+✓ intervalo de datas
+✓ filtros por evento
+
+Fase 3:
+
+✓ retenção
+✓ WP-Cron
+✓ exportação
+✓ REST API
+✓ capabilities específicas
