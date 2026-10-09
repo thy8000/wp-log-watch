@@ -6,7 +6,7 @@ if(!defined("ABSPATH")) {
     exit;
 }
 
-class AuditLogTable {
+final class AuditLogTable {
     private string $db_version = '1.0.0';
 
     public function __construct(string $plugin_file) {
@@ -33,7 +33,7 @@ class AuditLogTable {
             user_agent varchar(100),
             request_id mediumint(9) NOT NULL,
             occurred_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
-            changes LONGETEXT,
+            changes LONGTEXT,
             PRIMARY KEY (ID)
         ) $charset_collate;";
 

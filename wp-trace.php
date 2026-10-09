@@ -22,3 +22,4 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 
 new WPTrace\Database\AuditLogTable(__FILE__);
+new WPTrace\Events\PostEvents();
