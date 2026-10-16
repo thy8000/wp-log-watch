@@ -6,29 +6,32 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use WPTrace\Builder\EventPostBuilder;
+use WPTrace\Database\AuditLogTableHelper;
+
 final class PostLogger
 {
-    public function save($post_ID)
+    public function save($post_ID, $event_type = 'create')
     {
-        $event_data = [
-            'event_type'      => 'post.updated',
-            'action'          => 'update',
-            'actor_user_id'   => 123,
-            'actor_login'     => 'joao',
-            'resource_type'   => 'post',
-            'resource_id'     => 456,
-            'resource_name'   => 'Meu artigo',
-            'context'         => 'wp-admin',
-            'ip_address'      => '192.0.2.10',
-            'user_agent'      => 'Mozilla/5.0...',
-            'request_id'      => '...',
-            'occurred_at'     => '2026-10-06 23:10:00',
-            'changes'         => [
-                'post_status' => [
-                    'old' => 'draft',
-                    'new' => 'publish',
-                ],
-            ],
-        ];
+        global $wpdb;
+
+        $EventPostBuilder = new EventPostBuilder($post_ID);
+        $event_post_data = $EventPostBuilder->set_post_data($event_type);
+        $event_post_format = $EventPostBuilder->set_post_data_format($event_type);
+
+        $table_name = AuditLogTableHelper::get_table_name();
+
+        $result = $wpdb->insert($table_name, $event_post_data, $event_post_format);
+
+        if (empty($result) || is_wp_error()) {
+            error_log(print_r($wpdb->last_error));
+
+            return;
+        }
+
+        $insert_ID = $wpdb->insert_id;
+        error_log(print_r("Evento criado com sucesso: {$insert_ID}"));
+
+        return;
     }
 }

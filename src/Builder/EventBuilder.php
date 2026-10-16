@@ -2,6 +2,8 @@
 
 namespace WPTrace\Builder;
 
+use DateTime;
+
 if(!defined('ABSPATH')) {
     exit;
 }
@@ -28,5 +30,20 @@ class EventBuilder {
 
     public function get_user_agent() {
         return $_SERVER['HTTP_USER_AGENT'] ?? esc_html__('Desconhecido', 'wp-trace');
+    }
+
+    public function get_request_UUID4() {
+        $random_bytes_data = random_bytes(16);
+
+        $random_bytes_data[6] = chr(ord($random_bytes_data[6]) & 0x0f | 0x40);
+        $random_bytes_data[8] = chr(ord($random_bytes_data[8]) & 0x3f | 0x80);
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($random_bytes_data), 4));
+    }
+
+    public function get_occurred_at() {
+        $date_time = new DateTime();
+
+        return $date_time->format('Y-m-d H:i:s');
     }
 }

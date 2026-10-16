@@ -2,21 +2,26 @@
 
 namespace WPTrace\Database;
 
-if(!defined("ABSPATH")) {
+if (!defined("ABSPATH")) {
     exit;
 }
 
-final class AuditLogTable {
+use WPTrace\Database\AuditLogTableHelper;
+
+final class AuditLogTable
+{
     private string $db_version = '1.0.0';
 
-    public function __construct(string $plugin_file) {
+    public function __construct(string $plugin_file)
+    {
         register_activation_hook($plugin_file, [$this, 'create_table']);
     }
 
-    public function create_table() {
+    public function create_table()
+    {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'audit_log';
+        $table_name = AuditLogTableHelper::get_table_name();
         $charset_collate = $wpdb->get_charset_collate();
 
         $sql = "CREATE TABLE $table_name (
@@ -43,4 +48,6 @@ final class AuditLogTable {
 
         update_option('wp-trace_db_version', $this->db_version);
     }
+
+
 }

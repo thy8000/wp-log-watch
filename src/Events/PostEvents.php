@@ -26,6 +26,6 @@ final class PostEvents
         }
 
         $PostLogger = new PostLogger();
-        $PostLogger->save($post_ID);
+        $PostLogger->save($post_ID, 'create');
     }
 }
