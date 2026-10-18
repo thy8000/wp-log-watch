@@ -35,7 +35,7 @@ final class AuditLogTable
             resource_name varchar(300) NOT NULL,
             context varchar(20),
             ip_address VARBINARY(16), 
-            user_agent varchar(100),
+            user_agent varchar(300),
             request_id mediumint(9) NOT NULL,
             occurred_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
             changes LONGTEXT,

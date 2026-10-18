@@ -12,20 +12,22 @@ final class PostEvents
 {
     public function __construct()
     {
-        \add_action('wp_insert_post', [$this, 'create_post'],  10, 3);
+        \add_action('transition_post_status', [$this, 'check_post_publish'],  10, 3);
     }
 
-    public function create_post($post_ID, $post, $update)
+    public function check_post_publish($new_status, $old_status, $post)
     {
-        if (\wp_is_post_revision($post_ID) || \wp_is_post_autosave($post_ID)) {
+        if ($post->post_type !== 'post') {
             return;
         }
 
-        if ($update || $post->post_type !== 'post') {
+        if (\wp_is_post_revision($post->ID) || \wp_is_post_autosave($post->ID)) {
             return;
         }
 
-        $PostLogger = new PostLogger();
-        $PostLogger->save($post_ID, 'create');
+        if ($new_status === 'publish' && $old_status !== 'publish') {
+            $PostLogger = new PostLogger();
+            $PostLogger->save($post->ID, 'create');
+        }
     }
 }

@@ -21,6 +21,8 @@ class EventPostBuilder extends EventBuilder
 
     public function __construct($post_ID)
     {
+        parent::__construct();
+        
         if (!empty($post_ID) && !is_wp_error($post_ID)) {
             $Post = get_post($post_ID);
         }

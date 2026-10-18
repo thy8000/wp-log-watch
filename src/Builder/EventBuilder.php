@@ -11,7 +11,7 @@ if(!defined('ABSPATH')) {
 class EventBuilder {
     private $User = null;
 
-    private function __construct()
+    public function __construct()
     {
         $this->User = \wp_get_current_user();
     }

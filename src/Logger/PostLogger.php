@@ -23,14 +23,11 @@ final class PostLogger
 
         $result = $wpdb->insert($table_name, $event_post_data, $event_post_format);
 
-        if (empty($result) || is_wp_error()) {
-            error_log(print_r($wpdb->last_error));
-
+        if (empty($result) || is_wp_error($result)) {
             return;
         }
 
         $insert_ID = $wpdb->insert_id;
-        error_log(print_r("Evento criado com sucesso: {$insert_ID}"));
 
         return;
     }
