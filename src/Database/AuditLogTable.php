@@ -30,6 +30,7 @@ final class AuditLogTable
             action varchar(20) NOT NULL,
             actor_user_ID mediumint(9) unsigned NOT NULL,
             actor_login varchar(100) NOT NULL,
+            actor_type varchar(100) NOT NULL,
             resource_type varchar(20) NOT NULL,
             resource_ID mediumint(9),
             resource_name varchar(300) NOT NULL,
