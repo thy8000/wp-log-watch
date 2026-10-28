@@ -35,9 +35,9 @@ final class AuditLogTable
             resource_ID mediumint(9),
             resource_name varchar(300) NOT NULL,
             context varchar(20),
-            ip_address VARBINARY(16), 
+            ip_address varchar(45), 
             user_agent varchar(300),
-            request_id mediumint(9) NOT NULL,
+            request_id char(36) NOT NULL,
             occurred_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
             changes LONGTEXT,
             PRIMARY KEY (ID)

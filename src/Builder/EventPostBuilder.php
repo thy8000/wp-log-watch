@@ -40,13 +40,13 @@ class EventPostBuilder extends EventBuilder
             'actor_user_id'   => $this->get_user_ID(),
             'actor_login'     => $this->get_user_login(),
             'actor_type'      => $this->get_actor_type(),
-            'resource_type'   => $this->get_resource_type(), // porque veio 0 ?
+            'resource_type'   => $this->get_resource_type(),
             'resource_id'     => $this->get_resource_ID(),
             'resource_name'   => $this->get_resource_name(),
             'context'         => $this->get_context(),
-            'ip_address'      => $this->get_ip_address(), // porquê veio mal formatado ?
-            'user_agent'      => $this->get_user_agent(), // porquê veio 0 ?    
-            'request_id'      => $this->get_request_UUID4(), // compensa manter ?
+            'ip_address'      => $this->get_ip_address(),
+            'user_agent'      => $this->get_user_agent(),   
+            'request_id'      => $this->get_request_UUID4(),
             'occurred_at'     => $this->get_occurred_at(),
         ];
 
@@ -61,12 +61,13 @@ class EventPostBuilder extends EventBuilder
             '%d',
             '%s',
             '%s',
-            '%d',
-            '%s',
-            '%s',
-            '%s',
             '%s',
             '%d',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
+            '%s',
             '%s',
         ];
     }

@@ -52,6 +52,8 @@ class EventBuilder
 
     public function get_ip_address()
     {
+        error_log(print_r($_SERVER, true));
+
         return $_SERVER['REMOTE_ADDR'];
     }
 
