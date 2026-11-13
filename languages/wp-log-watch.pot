@@ -1,0 +1,23 @@
+# Copyright (C) 2026 WP Log Watch
+# This file is distributed under the GPL-2.0-or-later license.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Log Watch 0.1.0\n"
+"Report-Msgid-Bugs-To: https://example.com/wp-log-watch\n"
+"POT-Creation-Date: 2026-11-12 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: WP Log Watch\n"
+"X-Domain: wp-log-watch\n"
+
+#. Plugin name
+msgid "WP Log Watch"
+msgstr ""
+
+#. Plugin description
+msgid "Audit log plugin for WordPress. Tracks content, user, system and security events and protects the records against unauthorized access."
+msgstr ""
