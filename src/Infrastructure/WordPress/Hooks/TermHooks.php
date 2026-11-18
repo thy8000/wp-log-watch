@@ -9,11 +9,16 @@ use WPLogWatch\Domain\ValueObjects\EventType;
 use WPLogWatch\Domain\ValueObjects\ResourceType;
 
 /**
- * Audits taxonomy term changes (categories and tags by default).
+ * Audits taxonomy term changes (all taxonomies by default).
  */
 final class TermHooks extends AbstractHook {
 
-	private const AUDITED_TAXONOMIES = array( 'category', 'post_tag' );
+	/**
+	 * Built-in taxonomies whose terms are never audited: they are internal to
+	 * WordPress (menus, post formats, legacy link categories) rather than
+	 * user-managed content.
+	 */
+	private const IGNORED_TAXONOMIES = array( 'nav_menu', 'link_category', 'post_format' );
 
 	public function register(): void {
 		add_action( 'created_term', array( $this, 'onCreated' ), 10, 3 );
@@ -86,6 +91,20 @@ final class TermHooks extends AbstractHook {
 	}
 
 	private function isAudited( string $taxonomy ): bool {
-		return in_array( $taxonomy, self::AUDITED_TAXONOMIES, true );
+		if ( in_array( $taxonomy, self::IGNORED_TAXONOMIES, true ) ) {
+			return false;
+		}
+
+		if ( ! taxonomy_exists( $taxonomy ) ) {
+			return false;
+		}
+
+		/**
+		 * Filters whether term changes in a given taxonomy are audited.
+		 *
+		 * @param bool   $audited  Whether to audit this taxonomy. Default true.
+		 * @param string $taxonomy The taxonomy name.
+		 */
+		return (bool) apply_filters( 'wp_log_watch_audit_taxonomy', true, $taxonomy );
 	}
 }
