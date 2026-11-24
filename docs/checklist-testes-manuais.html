@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WP Log Watch — Checklist de Testes Manuais</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --border: #e2e5ea;
+    --text: #1f2430;
+    --muted: #6b7280;
+    --accent: #2271b1;
+    --accent-soft: #eaf2fa;
+    --success: #16a34a;
+    --success-soft: #e8f7ee;
+    --danger: #dc2626;
+    --shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header.app {
+    position: sticky; top: 0; z-index: 10;
+    background: linear-gradient(180deg, rgba(245,246,248,0.98) 0%, rgba(245,246,248,0.92) 100%);
+    backdrop-filter: blur(6px);
+    padding: 18px 0 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .app__title { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .app__title h1 { margin: 0; font-size: 1.35rem; font-weight: 700; letter-spacing: -0.01em; }
+  .app__title .tag {
+    font-size: 0.72rem; font-weight: 600; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid #cfe0f2;
+    padding: 2px 8px; border-radius: 999px;
+  }
+
+  .progress-row { display: flex; align-items: center; gap: 14px; margin-top: 12px; }
+  .progress-track { flex: 1; height: 10px; background: #e6e8ec; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: var(--accent); border-radius: 999px; transition: width .25s ease; }
+  .progress-fill.done { background: var(--success); }
+  .progress-label { font-size: 0.9rem; font-weight: 600; white-space: nowrap; min-width: 118px; text-align: right; }
+  .progress-label .pct { color: var(--muted); font-weight: 500; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 8px; }
+  button {
+    font: inherit; font-size: 0.86rem; font-weight: 600;
+    color: var(--text); background: var(--card);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 12px; cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  button:hover { background: var(--accent-soft); border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.primary:hover { background: #1a5f94; }
+  button.danger:hover { background: #fdecec; border-color: var(--danger); color: var(--danger); }
+
+  section.group {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: var(--shadow);
+    margin-bottom: 16px; overflow: hidden;
+  }
+  .group__head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px; cursor: pointer; user-select: none;
+  }
+  .group__head:hover { background: #fafbfc; }
+  .group__head h2 { margin: 0; font-size: 1.02rem; font-weight: 650; flex: 1; }
+  .group__count { font-size: 0.8rem; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .group__count.ok { color: var(--success); }
+  .chevron { color: var(--muted); transition: transform .2s ease; font-size: 0.8rem; }
+  .group.is-collapsed .chevron { transform: rotate(-90deg); }
+  .group.is-collapsed .group__body { display: none; }
+
+  .group__body { border-top: 1px solid var(--border); padding: 6px 0; }
+  .group__body ul { list-style: none; margin: 0; padding: 0; }
+  .group__body li { border-bottom: 1px solid #f0f1f4; }
+  .group__body li:last-child { border-bottom: none; }
+  .group__body li.checked-label { display: none; }
+
+  .item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 18px; cursor: pointer; }
+  .item:hover { background: #fafbfc; }
+  .item input[type="checkbox"] {
+    margin-top: 3px; width: 18px; height: 18px; flex: 0 0 18px;
+    accent-color: var(--accent); cursor: pointer;
+  }
+  .item span { font-size: 0.95rem; }
+  .item code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.86rem; background: #f1f3f5; padding: 1px 6px; border-radius: 5px; }
+  .item.is-done span { color: var(--muted); text-decoration: line-through; }
+
+  footer { text-align: center; color: var(--muted); font-size: 0.8rem; margin-top: 24px; }
+
+  @media (max-width: 520px) {
+    .progress-row { flex-direction: column; align-items: stretch; gap: 8px; }
+    .progress-label { text-align: center; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <div class="app__title">
+      <h1>WP Log Watch — Testes Manuais</h1>
+      <span class="tag">checklist</span>
+    </div>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="bar"></div></div>
+      <div class="progress-label"><span id="done">0</span>/<span id="total">0</span> <span class="pct" id="pct">0%</span></div>
+    </div>
+    <div class="toolbar">
+      <button class="primary" id="btnAll">Marcar todos</button>
+      <button id="btnNone">Desmarcar todos</button>
+      <button id="btnPending">Mostrar pendentes</button>
+      <button id="btnExpand">Expandir tudo</button>
+      <button id="btnCollapse">Recolher tudo</button>
+      <button id="btnCopy">Copiar resumo</button>
+      <button class="danger" id="btnReset">Resetar progresso</button>
+    </div>
+  </header>
+
+  <main id="list"></main>
+
+  <footer>Progresso salvo automaticamente neste navegador (localStorage).</footer>
+</div>
+
+<script>
+const STORAGE_KEY = "wp-log-watch-checklist-v1";
+
+const SECTIONS = [
+  { title: "0. Preparação", items: [
+    "Ativar o plugin e confirmar que a tabela {prefix}wp_log_watch_audit_logs foi criada.",
+    "Confirmar que o menu WP Log Watch aparece no wp-admin.",
+    "Confirmar submenus: Audit Log e Settings.",
+    "Logar como administrador (recebe as capabilities por padrão)."
+  ]},
+  { title: "1. Eventos de Conteúdo (posts/páginas)", items: [
+    "Criar post novo (Publicar) → post.created.",
+    "Criar página → post.created com resource page.",
+    "Criar rascunho e publicar depois → apenas 1 criação (sem duplicar auto-draft).",
+    "Alterar título → post.updated com before/after em title.",
+    "Alterar autor → post.updated com before/after em author.",
+    "Alterar slug → diff em slug.",
+    "Salvar sem alterações → sem evento.",
+    "Rascunho → Publicado → post.published.",
+    "Publicado → Rascunho → post.drafted.",
+    "Mover para lixeira → post.trashed.",
+    "Restaurar da lixeira → post.restored.",
+    "Excluir permanentemente → post.deleted.",
+    "Menu (nav_menu_item), mídia (attachment), revisão e autosave → sem evento."
+  ]},
+  { title: "2. Taxonomias (apenas category e post_tag)", items: [
+    "Criar categoria → term.created.",
+    "Editar categoria → term.updated.",
+    "Excluir categoria → term.deleted.",
+    "Criar tag → term.created.",
+    "Excluir tag → term.deleted.",
+    "Termo de taxonomia customizada → sem evento."
+  ]},
+  { title: "3. Usuários e Autenticação", items: [
+    "Criar usuário → user.created.",
+    "Editar email → user.updated (diff email).",
+    "Editar nome de exibição → diff display_name.",
+    "Editar URL do site → diff url.",
+    "Alterar role → user.role_changed.",
+    "Excluir usuário → user.deleted.",
+    "Login → user.login.",
+    "Logout → user.logout.",
+    "Login com senha errada → user.login_failed (ator system)."
+  ]},
+  { title: "4. Sistema (plugins, temas, core)", items: [
+    "Ativar plugin → plugin.activated.",
+    "Desativar plugin → plugin.deactivated.",
+    "Excluir plugin → plugin.deleted.",
+    "Instalar plugin → plugin.installed.",
+    "Atualizar plugin → plugin.updated.",
+    "Trocar tema → theme.activated.",
+    "Instalar tema → theme.installed.",
+    "Atualizar tema → theme.updated.",
+    "Atualizar core → system.core_updated."
+  ]},
+  { title: "5. UI Admin — Listagem", items: [
+    "Colunas: ID, Data, Ator, Evento, Recurso, Descrição, IP.",
+    "Data no fuso local do site.",
+    "Ator usuário mostra o login; ator system mostra system.",
+    "Clicar no ID → abre o detalhe."
+  ]},
+  { title: "6. UI Admin — Detalhe", items: [
+    "Mostra UUID, contexto, IP, user agent e JSON de metadata.",
+    "Em eventos com diff, a seção Changes mostra Field/Before/After.",
+    "Alteração de autor mostra nome (ID: N) no before/after (ex.: João Silva (ID: 5)).",
+    "Autor apagado/inexistente → mostra ID: N (não quebra).",
+    "author NÃO aparece como [redacted] (regressão do filtro de dados sensíveis)."
+  ]},
+  { title: "7. UI Admin — Filtros e Busca", items: [
+    "Filtro por datas (From/To).",
+    "Filtro por usuário (actor).",
+    "Filtro por tipo de evento.",
+    "Filtro por tipo de recurso.",
+    "Filtro por Resource ID.",
+    "Busca por texto (s).",
+    "Combinação de filtros.",
+    "Reset limpa os filtros.",
+    "Paginação (50+ registros)."
+  ]},
+  { title: "8. Export", items: [
+    "Export CSV → baixa .csv válido.",
+    "Export JSON → .json válido (generated_at, count, items).",
+    "Export respeita filtros ativos.",
+    "Export sem nonce → bloqueado."
+  ]},
+  { title: "9. Configurações (Retenção)", items: [
+    "Settings mostra o período atual (padrão 90 dias).",
+    "Alterar para 7 dias → Settings saved. persistido.",
+    "Alterar para Keep forever (0) → persistido.",
+    "Valor inválido → Invalid retention period."
+  ]},
+  { title: "10. Cron / Retenção", items: [
+    "Evento wp_log_watch_retention agendado.",
+    "Run now (WP Crontrol ou wp cron event run wp_log_watch_retention).",
+    "Retenção = 7 dias → registros antigos apagados.",
+    "Retenção = 0 → nada apagado.",
+    "Desativar plugin → agendamento removido."
+  ]},
+  { title: "11. Segurança e Permissões", items: [
+    "Editor/Author não vê o menu.",
+    "Acesso direto a admin.php?page=wp-log-watch como editor → wp_die.",
+    "Acesso a Settings como editor → bloqueado.",
+    "Capabilities no role administrator.",
+    "Sem ações de escrita na UI (somente leitura)."
+  ]},
+  { title: "12. REST API (leitura)", items: [
+    "GET /wp-json/wp-log-watch/v1/logs (admin) → lista com paginação.",
+    "Filtros: event_type, resource_type, actor_id, resource_id, date_from/date_to, orderby/order.",
+    "GET .../logs/<id> → detalhe; id inexistente → 404.",
+    "Sem autenticação → negado.",
+    "Parâmetros inválidos → rejeitados pelos validators."
+  ]},
+  { title: "13. Redação de Dados Sensíveis / Contexto", items: [
+    "Metadata tem a chave context (wp-admin, frontend, rest-api, etc.).",
+    "IP vem de REMOTE_ADDR (ignora X-Forwarded-For).",
+    "User agent gravado (truncado a 512).",
+    "Chaves sensíveis (password, token, cookie, nonce, api_key) → [redacted].",
+    "author NÃO é redigido (regressão corrigida).",
+    "Post meta respeita o allowlist (_thumbnail_id, _wp_page_template)."
+  ]},
+  { title: "14. Ciclo de vida do plugin", items: [
+    "Desativar → reativar: sem erros, dados preservados.",
+    "Cron removido ao desativar e reagendado ao reativar.",
+    "wp plugin deactivate/activate via CLI → sem warnings/fatais."
+  ]},
+  { title: "15. Robustez", items: [
+    "Com WP_DEBUG/WP_DEBUG_LOG ativos, repetir ações → sem warnings/notices no debug.log.",
+    "Falha no logging nunca quebra a ação observada."
+  ]}
+];
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+function saveState(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+let state = loadState();
+let hideChecked = false;
+
+const listEl = document.getElementById("list");
+
+function key(s, i) { return s + ":" + i; }
+
+function render() {
+  listEl.innerHTML = "";
+  let total = 0, done = 0;
+
+  SECTIONS.forEach((section, s) => {
+    const sec = document.createElement("section");
+    sec.className = "group";
+
+    const head = document.createElement("div");
+    head.className = "group__head";
+
+    const h2 = document.createElement("h2");
+    h2.textContent = section.title;
+
+    const count = document.createElement("span");
+    count.className = "group__count";
+
+    const chevron = document.createElement("span");
+    chevron.className = "chevron";
+    chevron.textContent = "▼";
+
+    head.appendChild(h2);
+    head.appendChild(count);
+    head.appendChild(chevron);
+    head.addEventListener("click", () => sec.classList.toggle("is-collapsed"));
+
+    const body = document.createElement("div");
+    body.className = "group__body";
+
+    const ul = document.createElement("ul");
+    let secTotal = 0, secDone = 0;
+
+    section.items.forEach((text, i) => {
+      const k = key(s, i);
+      const checked = !!state[k];
+      secTotal++; total++;
+      if (checked) secDone++, done++;
+
+      const li = document.createElement("li");
+      if (hideChecked && checked) li.className = "checked-label";
+
+      const label = document.createElement("label");
+      label.className = "item" + (checked ? " is-done" : "");
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = checked;
+      cb.addEventListener("change", () => {
+        state[k] = cb.checked;
+        saveState(state);
+        render();
+      });
+
+      const span = document.createElement("span");
+      span.innerHTML = escapeHtml(text);
+
+      label.appendChild(cb);
+      label.appendChild(span);
+      li.appendChild(label);
+      ul.appendChild(li);
+    });
+
+    count.textContent = secDone + "/" + secTotal;
+    count.classList.toggle("ok", secDone === secTotal && secTotal > 0);
+
+    body.appendChild(ul);
+    sec.appendChild(head);
+    sec.appendChild(body);
+    listEl.appendChild(sec);
+  });
+
+  const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+  document.getElementById("done").textContent = done;
+  document.getElementById("total").textContent = total;
+  document.getElementById("pct").textContent = pct + "%";
+  const bar = document.getElementById("bar");
+  bar.style.width = pct + "%";
+  bar.classList.toggle("done", done === total && total > 0);
+  document.getElementById("btnPending").textContent = hideChecked ? "Mostrar todos" : "Mostrar pendentes";
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/(`[^`]+`)/g, (m) => "<code>" + m.slice(1, -1) + "</code>");
+}
+
+document.getElementById("btnAll").addEventListener("click", () => {
+  SECTIONS.forEach((section, s) => section.items.forEach((_, i) => state[key(s, i)] = true));
+  saveState(state); render();
+});
+document.getElementById("btnNone").addEventListener("click", () => {
+  SECTIONS.forEach((section, s) => section.items.forEach((_, i) => state[key(s, i)] = false));
+  saveState(state); render();
+});
+document.getElementById("btnPending").addEventListener("click", () => {
+  hideChecked = !hideChecked; render();
+});
+document.getElementById("btnExpand").addEventListener("click", () => {
+  document.querySelectorAll(".group").forEach(g => g.classList.remove("is-collapsed"));
+});
+document.getElementById("btnCollapse").addEventListener("click", () => {
+  document.querySelectorAll(".group").forEach(g => g.classList.add("is-collapsed"));
+});
+document.getElementById("btnReset").addEventListener("click", () => {
+  if (confirm("Resetar todo o progresso?")) {
+    state = {}; saveState(state); hideChecked = false; render();
+  }
+});
+document.getElementById("btnCopy").addEventListener("click", () => {
+  const lines = ["# WP Log Watch — Testes Manuais", ""];
+  SECTIONS.forEach((section, s) => {
+    lines.push("## " + section.title);
+    section.items.forEach((text, i) => {
+      const mark = state[key(s, i)] ? "[x]" : "[ ]";
+      lines.push("- " + mark + " " + text.replace(/`/g, ""));
+    });
+    lines.push("");
+  });
+  navigator.clipboard.writeText(lines.join("\n")).then(() => {
+    const b = document.getElementById("btnCopy");
+    b.textContent = "Copiado!";
+    setTimeout(() => b.textContent = "Copiar resumo", 1200);
+  });
+});
+
+render();
+</script>
+</body>
+</html>
