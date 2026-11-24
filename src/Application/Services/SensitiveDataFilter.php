@@ -70,7 +70,12 @@ final class SensitiveDataFilter {
 		$normalized = strtolower( $key );
 
 		foreach ( self::SENSITIVE_PATTERNS as $pattern ) {
-			if ( str_contains( $normalized, $pattern ) ) {
+			// Match on token boundaries so a broad term such as "auth" does not
+			// redact an innocent key like "author". Non-alphanumerics (including
+			// underscores) delimit tokens, so "user_token" still matches "token".
+			$regex = '/(?:^|[^a-z0-9])' . preg_quote( $pattern, '/' ) . '(?:$|[^a-z0-9])/';
+
+			if ( preg_match( $regex, $normalized ) === 1 ) {
 				return true;
 			}
 		}

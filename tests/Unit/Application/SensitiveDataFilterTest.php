@@ -54,4 +54,18 @@ final class SensitiveDataFilterTest extends TestCase
         self::assertSame('editor', $result['role']);
         self::assertSame('my-post', $result['slug']);
     }
+
+    public function testDoesNotMaskAuthorKey(): void
+    {
+        $result = $this->filter->filter(['before' => ['author' => 'john']]);
+
+        self::assertSame('john', $result['before']['author']);
+    }
+
+    public function testMasksAuthorizationKey(): void
+    {
+        $result = $this->filter->filter(['authorization' => 'Bearer abc']);
+
+        self::assertSame('[redacted]', $result['authorization']);
+    }
 }
