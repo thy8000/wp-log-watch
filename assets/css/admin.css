@@ -1,0 +1,52 @@
+.wp-log-watch__filters {
+	margin: 1em 0;
+	padding: 1em;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.wp-log-watch__filters-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+	align-items: flex-end;
+}
+
+.wp-log-watch__filters-row label {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25em;
+}
+
+.wp-log-watch__filters-row label span {
+	font-weight: 600;
+	font-size: 12px;
+}
+
+.wp-log-watch__table .column-id {
+	width: 64px;
+}
+
+.wp-log-watch__table .column-ip {
+	width: 130px;
+}
+
+.wp-log-watch__table .column-description {
+	word-break: break-word;
+}
+
+.wp-log-watch__detail th,
+.wp-log-watch__changes th {
+	width: 180px;
+}
+
+.wp-log-watch__json {
+	margin: 0;
+	padding: 1em;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
