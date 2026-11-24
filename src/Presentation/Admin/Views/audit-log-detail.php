@@ -84,6 +84,29 @@ $listUrl = admin_url( 'admin.php?page=wp-log-watch' );
 	<?php
 	$before = isset( $metadata['before'] ) && is_array( $metadata['before'] ) ? $metadata['before'] : null;
 	$after  = isset( $metadata['after'] ) && is_array( $metadata['after'] ) ? $metadata['after'] : null;
+
+	$formatChangeValue = static function ( string $field, mixed $value ): string {
+		if ( $value === null ) {
+			return '—';
+		}
+
+		if ( $field === 'author' ) {
+			$userId = (int) $value;
+			$user   = get_userdata( $userId );
+
+			if ( $user instanceof \WP_User ) {
+				$name = $user->display_name !== '' ? $user->display_name : $user->user_login;
+
+				/* translators: 1: author display name, 2: author user ID. */
+				return sprintf( __( '%1$s (ID: %2$d)', 'wp-log-watch' ), $name, $userId );
+			}
+
+			/* translators: %d: author user ID. */
+			return sprintf( __( 'ID: %d', 'wp-log-watch' ), $userId );
+		}
+
+		return (string) $value;
+	};
 	?>
 
 	<?php if ( $before !== null || $after !== null ) : ?>
@@ -105,8 +128,8 @@ $listUrl = admin_url( 'admin.php?page=wp-log-watch' );
 					?>
 					<tr>
 						<td><code><?php echo esc_html( (string) $field ); ?></code></td>
-						<td><?php echo esc_html( $oldValue === null ? '—' : (string) $oldValue ); ?></td>
-						<td><?php echo esc_html( $newValue === null ? '—' : (string) $newValue ); ?></td>
+						<td><?php echo esc_html( $formatChangeValue( $field, $oldValue ) ); ?></td>
+						<td><?php echo esc_html( $formatChangeValue( $field, $newValue ) ); ?></td>
 					</tr>
 				<?php endforeach; ?>
 			</tbody>
