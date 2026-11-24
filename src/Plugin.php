@@ -24,6 +24,7 @@ use WPLogWatch\Infrastructure\WordPress\WordPressUserProvider;
 use WPLogWatch\Infrastructure\WordPress\Hooks\PluginHooks;
 use WPLogWatch\Infrastructure\WordPress\Hooks\PostHooks;
 use WPLogWatch\Infrastructure\WordPress\Hooks\PostMetaHooks;
+use WPLogWatch\Infrastructure\WordPress\Hooks\RegistrationHooks;
 use WPLogWatch\Infrastructure\WordPress\Hooks\TermHooks;
 use WPLogWatch\Infrastructure\WordPress\Hooks\ThemeHooks;
 use WPLogWatch\Infrastructure\WordPress\Hooks\UserHooks;
@@ -142,6 +143,7 @@ final class Plugin {
 		$c->factory( PluginHooks::class, static fn (): PluginHooks => $hookFactory( PluginHooks::class ) );
 		$c->factory( ThemeHooks::class, static fn (): ThemeHooks => $hookFactory( ThemeHooks::class ) );
 		$c->factory( PostMetaHooks::class, static fn (): PostMetaHooks => $hookFactory( PostMetaHooks::class ) );
+		$c->factory( RegistrationHooks::class, static fn (): RegistrationHooks => $hookFactory( RegistrationHooks::class ) );
 	}
 
 	private function wireCron( Container $c ): void {
@@ -197,6 +199,7 @@ final class Plugin {
 			PluginHooks::class,
 			ThemeHooks::class,
 			PostMetaHooks::class,
+			RegistrationHooks::class,
 		) as $hookClass ) {
 			$this->container->get( $hookClass )->register();
 		}

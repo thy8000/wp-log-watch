@@ -51,6 +51,11 @@ final class EventType {
 
 	public const SYSTEM_CORE_UPDATED = 'system.core_updated';
 
+	public const SYSTEM_POST_TYPE_REGISTERED   = 'system.post_type_registered';
+	public const SYSTEM_POST_TYPE_UNREGISTERED = 'system.post_type_unregistered';
+	public const SYSTEM_TAXONOMY_REGISTERED    = 'system.taxonomy_registered';
+	public const SYSTEM_TAXONOMY_UNREGISTERED  = 'system.taxonomy_unregistered';
+
 	private function __construct( private readonly string $value ) {
 	}
 

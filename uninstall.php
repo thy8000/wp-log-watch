@@ -13,6 +13,8 @@ $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}wp_log_watch_audit_logs" );
 
 delete_option( 'wp_log_watch_db_version' );
 delete_option( 'wp_log_watch_retention_days' );
+delete_option( 'wp_log_watch_registered_post_types' );
+delete_option( 'wp_log_watch_registered_taxonomies' );
 
 wp_clear_scheduled_hook( 'wp_log_watch_retention' );
 

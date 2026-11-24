@@ -214,6 +214,16 @@ final class PostHooks extends AbstractHook {
 			return true;
 		}
 
-		return in_array( $post->post_type, self::IGNORED_POST_TYPES, true );
+		if ( in_array( $post->post_type, self::IGNORED_POST_TYPES, true ) ) {
+			return true;
+		}
+
+		/**
+		 * Filters whether changes to a given post type are audited.
+		 *
+		 * @param bool   $audited   Whether to audit this post type. Default true.
+		 * @param string $post_type The post type name.
+		 */
+		return ! (bool) apply_filters( 'wp_log_watch_audit_post_type', true, $post->post_type );
 	}
 }
